@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.loveapp.databinding.ActivityMainBinding
 
 // @author Kerubel Abera
+// branch 2
 
 class MainActivity : AppCompatActivity() {
 
