@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "254317336467",
+    "project_id": "love-app-keru",
+    "storage_bucket": "love-app-keru.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254317336467:android:5898d6b1ec3bbe4bb23a66",
+        "android_client_info": {
+          "package_name": "com.example.loveapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254317336467-1gql1pn98fmupaf1jfh6g78a1uhvv8j0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_OAYgeo611ru7DnOyOZyAR7E8zG_g2B4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254317336467-1gql1pn98fmupaf1jfh6g78a1uhvv8j0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

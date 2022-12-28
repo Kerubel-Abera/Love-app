@@ -1,11 +1,10 @@
-package com.example.loveapp.ui.dashboard
+package com.example.loveapp.ui.account.signup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
-
+class SignUpViewModel : ViewModel() {
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"
     }
