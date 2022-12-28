@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/activity_main.xml" value="0.8508064516129032" />
+        <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/content_login.xml" value="0.1" />
+        <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/fragment_first.xml" value="0.1" />
         <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/fragment_login.xml" value="0.1" />
+        <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/login_fragment.xml" value="0.1" />
         <entry key="..\:/android-apps/love_app/app/app/src/main/res/layout/sign_up_fragment.xml" value="0.1" />
       </map>
     </option>

@@ -27,7 +27,7 @@ class LogInFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         logInViewModel =
-            ViewModelProvider(this)[logInViewModel::class.java]
+            ViewModelProvider(this)[LogInViewModel::class.java]
 
         _binding = FragmentLogInBinding.inflate(inflater, container, false)
         return binding.root
