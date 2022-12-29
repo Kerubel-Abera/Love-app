@@ -8,7 +8,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.loveapp.databinding.ActivityLoginBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -21,12 +23,12 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        val navController = findNavController(R.id.nav_host_fragment_content_login)
+        val navController = findNavController(R.id.nav_host_fragment_activity_login)
 
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_login)
+        val navController = findNavController(R.id.nav_host_fragment_activity_login)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
