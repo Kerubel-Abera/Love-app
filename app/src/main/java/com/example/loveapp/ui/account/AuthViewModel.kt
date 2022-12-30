@@ -33,20 +33,39 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
 
     val currentUser: FirebaseUser? = repository.currentUser
 
+
     init {
+        //initialize the data to null
         _passwordValidated.value = null
         _errorMessage.value = null
-        if(currentUser != null) {
+        //checks if user is already logged in
+        if (currentUser != null) {
             _loginData.value = Resource.Success(currentUser)
         }
     }
 
+    /**
+     * This function logs the user in with the help of the FirebaseAuth API
+     * @param email     The user his e-mail
+     * @param password  The user his password
+     *
+     * @return the login data that of the user
+     */
     fun login(email: String, password: String) = viewModelScope.launch {
         _loginData.value = Resource.Loading
         val result = repository.login(email, password)
         _loginData.value = result
     }
 
+
+    /**
+     * This function signs the user up with the help of the FirebaseAuth API
+     * @param name      The user his username
+     * @param email     The user his e-mail
+     * @param password  The user his password
+     *
+     * @return the login data that of the user
+     */
     fun signup(name: String, email: String, password: String) = viewModelScope.launch {
         _signupData.value = Resource.Loading
         val result = repository.signup(name, email, password)
@@ -54,7 +73,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     }
 
     fun checkPassword(password: String, confirmPassword: String) {
-        if(password != confirmPassword){
+        if (password != confirmPassword) {
             _errorMessage.value = "Passwords do not match."
         } else {
             _passwordValidated.value = "validated"
@@ -65,8 +84,14 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         _passwordValidated.value = null
     }
 
+    /**
+     * This function takes an exception and specifies it back
+     * @param exception     The exception from the auth API
+     *
+     * @return the specified exception in the errorMessage variable
+     */
     fun showErrorMessage(exception: Exception) {
-        when(exception){
+        when (exception) {
             is FirebaseAuthInvalidUserException ->
                 _errorMessage.value = "This e-mail has no account."
             is java.lang.IllegalArgumentException ->
@@ -78,7 +103,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
 
-    fun completeErrorMessage(){
+    fun completeErrorMessage() {
         _errorMessage.value = null
     }
 
@@ -86,12 +111,12 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         _navigate.value = "startNavigation"
     }
 
-    fun finishNavigate(){
+    fun finishNavigate() {
         _navigate.value = null
     }
 
 
-    fun logout(){
+    fun logout() {
         repository.logout()
         _loginData.value = null
         _signupData.value = null

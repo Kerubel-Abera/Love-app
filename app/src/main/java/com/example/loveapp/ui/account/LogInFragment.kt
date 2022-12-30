@@ -1,15 +1,12 @@
 package com.example.loveapp.ui.account
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.loveapp.MainActivity
 import com.example.loveapp.R
 import com.example.loveapp.data.Resource
 import com.example.loveapp.databinding.FragmentLogInBinding
@@ -38,23 +35,23 @@ class LogInFragment : Fragment() {
 
         _binding = FragmentLogInBinding.inflate(inflater, container, false)
 
-        authViewModel.navigate.observe(viewLifecycleOwner){
-            if(it != null) {
+        authViewModel.navigate.observe(viewLifecycleOwner) {
+            if (it != null) {
                 findNavController().navigate(R.id.action_LogInFragment_to_testFragment)
                 authViewModel.finishNavigate()
             }
         }
 
-        authViewModel.errorMessage.observe(viewLifecycleOwner){
-            if(it != null) {
+        authViewModel.errorMessage.observe(viewLifecycleOwner) {
+            if (it != null) {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
                 authViewModel.completeErrorMessage()
             }
         }
 
-        authViewModel.loginData.observe(viewLifecycleOwner){
+        authViewModel.loginData.observe(viewLifecycleOwner) {
             it?.let {
-                when(it){
+                when (it) {
                     is Resource.Failure -> {
                         authViewModel.showErrorMessage(it.exception)
                         binding.buttonLogIn.visibility = View.VISIBLE
