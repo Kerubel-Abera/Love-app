@@ -44,14 +44,25 @@ class LogInFragment : Fragment() {
             }
         }
 
+        authViewModel.errorMessage.observe(viewLifecycleOwner){
+            if(it != null) {
+                Toast.makeText(this.context, it, Toast.LENGTH_LONG).show()
+                authViewModel.completeErrorMessage()
+            }
+        }
+
         authViewModel.loginData.observe(viewLifecycleOwner){
             it?.let {
                 when(it){
                     is Resource.Failure -> {
-                        Toast.makeText(this.context, it.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                        authViewModel.showErrorMessage(it.exception)
+                        binding.buttonLogIn.visibility = View.VISIBLE
+                        binding.progressbarLoading.visibility = View.GONE
+
                     }
                     Resource.Loading -> {
-                        Toast.makeText(this.context, "Logging in", Toast.LENGTH_SHORT).show()
+                        binding.buttonLogIn.visibility = View.INVISIBLE
+                        binding.progressbarLoading.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
                         authViewModel.startNavigate()
