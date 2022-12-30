@@ -1,6 +1,7 @@
 package com.example.loveapp.ui.account
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.loveapp.R
 import com.example.loveapp.data.Resource
 import com.example.loveapp.databinding.FragmentSignUpBinding
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -37,8 +40,26 @@ class SignUpFragment : Fragment() {
 
         authViewModel.navigate.observe(viewLifecycleOwner){
             if(it != null) {
-                findNavController().navigate(R.id.action_SignUpFragment_to_LogInFragment)
+                findNavController().navigate(R.id.action_SignUpFragment_to_testFragment)
                 authViewModel.finishNavigate()
+            }
+        }
+
+        authViewModel.errorMessage.observe(viewLifecycleOwner){
+            if(it != null) {
+                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
+                authViewModel.completeErrorMessage()
+            }
+        }
+
+        authViewModel.passwordValidated.observe(viewLifecycleOwner){
+            if(it != null){
+                authViewModel.signup(
+                    binding.edittextUsername.text.toString(),
+                    binding.edittextEmail.text.toString(),
+                    binding.edittextPassword.text.toString()
+                )
+                authViewModel.validatedPassword()
             }
         }
 
@@ -46,14 +67,17 @@ class SignUpFragment : Fragment() {
             it?.let {
                 when(it){
                     is Resource.Failure -> {
-                        Toast.makeText(this.context, "Failed sign up", Toast.LENGTH_LONG).show()
+                        authViewModel.showErrorMessage(it.exception)
+                        binding.buttonSignUp.visibility = View.VISIBLE
+                        binding.progressbarLoading.visibility = View.GONE
+
                     }
                     Resource.Loading -> {
-                        Toast.makeText(this.context, "signing up", Toast.LENGTH_SHORT).show()
+                        binding.buttonSignUp.visibility = View.INVISIBLE
+                        binding.progressbarLoading.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
-                        binding.textviewTestdata.text = authViewModel.currentUser?.displayName
-                        //authViewModel.startNavigate()
+                        authViewModel.startNavigate()
                     }
                 }
             }
@@ -67,11 +91,12 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonSignUp.setOnClickListener {
-            authViewModel.signup(
-                binding.edittextUsername.text.toString(),
-                binding.edittextEmail.text.toString(),
-                binding.edittextPassword.text.toString()
-            )
+            authViewModel.checkPassword(
+                binding.edittextPassword.text.toString(),
+                binding.edittextConfirmPassword.text.toString())
+        }
+        binding.textviewLogIn.setOnClickListener {
+            findNavController().navigate(R.id.action_SignUpFragment_to_LogInFragment)
         }
     }
 

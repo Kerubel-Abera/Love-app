@@ -30,5 +30,9 @@
     <string name="error_password_placeholder">Error password</string>
     <string name="error_email_placeholder">Error email</string>
     <string name="dont_have_an_account">Don\'t have an account already? Click here.</string>
+    <string name="name">name</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="already_have_an_account_click_here_to_sign_up">Already have an account? Click here to log in.</string>
 
 </resources>

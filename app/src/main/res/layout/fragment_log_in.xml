@@ -9,28 +9,22 @@
 
     <EditText
         android:id="@+id/edittext_email"
+        style="@style/inputField"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/custom_input"
         android:drawableStart="@drawable/custom_email_icon"
-        android:drawablePadding="12dp"
         android:ems="10"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
-        android:minHeight="48dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/grey_lighter"
-        android:textColorHint="@color/grey_light"
         app:layout_constraintBottom_toTopOf="@+id/edittext_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.984" />
 
     <EditText
         android:id="@+id/edittext_password"
@@ -41,19 +35,15 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/custom_input"
         android:drawableStart="@drawable/custom_lock_icon"
-        android:drawablePadding="12dp"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:minHeight="48dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/grey_lighter"
-        android:textColorHint="@color/grey_light"
         app:layout_constraintBottom_toTopOf="@+id/button_log_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/inputField"/>
 
     <Button
         android:id="@+id/button_log_in"
@@ -61,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="128dp"
         android:layout_marginEnd="128dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="128dp"
         android:backgroundTint="@color/red_primary"
         android:text="@string/log_in"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -70,13 +60,11 @@
 
     <TextView
         android:id="@+id/textview_title"
+        style="@style/loveappTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:text="@string/title"
-        android:textColor="@color/red_light"
-        android:textSize="30sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

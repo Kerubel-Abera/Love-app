@@ -13,6 +13,7 @@ import com.example.loveapp.MainActivity
 import com.example.loveapp.R
 import com.example.loveapp.data.Resource
 import com.example.loveapp.databinding.FragmentLogInBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -46,7 +47,7 @@ class LogInFragment : Fragment() {
 
         authViewModel.errorMessage.observe(viewLifecycleOwner){
             if(it != null) {
-                Toast.makeText(this.context, it, Toast.LENGTH_LONG).show()
+                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
                 authViewModel.completeErrorMessage()
             }
         }

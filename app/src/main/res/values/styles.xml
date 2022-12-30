@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="loveappTitle">
+        <item name="android:textColor">@color/red_light</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="button">
+        <item name="android:textColor">@color/red_light</item>
+        <item name="android:backgroundTint">@color/red_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="inputField">
+        <item name="android:background">@drawable/custom_input</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textColor">@color/grey_lighter</item>
+        <item name="android:textColorHint">@color/grey_light</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+</resources>
