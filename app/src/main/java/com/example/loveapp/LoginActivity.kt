@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.hide()
 
         val navController = findNavController(R.id.nav_host_fragment_activity_login)
 

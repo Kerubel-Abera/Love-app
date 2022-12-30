@@ -1,5 +1,6 @@
 package com.example.loveapp.ui.account
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.loveapp.MainActivity
 import com.example.loveapp.R
 import com.example.loveapp.data.Resource
 import com.example.loveapp.databinding.FragmentLogInBinding
@@ -46,13 +48,12 @@ class LogInFragment : Fragment() {
             it?.let {
                 when(it){
                     is Resource.Failure -> {
-                        Toast.makeText(this.context, "Failed login", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this.context, it.exception.localizedMessage, Toast.LENGTH_LONG).show()
                     }
                     Resource.Loading -> {
                         Toast.makeText(this.context, "Logging in", Toast.LENGTH_SHORT).show()
                     }
                     is Resource.Success -> {
-                        binding.textviewTestdata.text = authViewModel.currentUser?.displayName
                         authViewModel.startNavigate()
                     }
                 }
@@ -71,6 +72,10 @@ class LogInFragment : Fragment() {
                 binding.edittextEmail.text.toString(),
                 binding.edittextPassword.text.toString()
             )
+        }
+
+        binding.textviewToSignUp.setOnClickListener {
+            findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }
     }
 
