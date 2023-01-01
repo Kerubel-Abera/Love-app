@@ -35,6 +35,7 @@ class LogInFragment : Fragment() {
 
         _binding = FragmentLogInBinding.inflate(inflater, container, false)
 
+        //Navigation LiveData
         authViewModel.navigate.observe(viewLifecycleOwner) {
             if (it != null) {
                 findNavController().navigate(R.id.action_LogInFragment_to_testFragment)
@@ -42,6 +43,7 @@ class LogInFragment : Fragment() {
             }
         }
 
+        //Error Livedata
         authViewModel.errorMessage.observe(viewLifecycleOwner) {
             if (it != null) {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
@@ -49,6 +51,8 @@ class LogInFragment : Fragment() {
             }
         }
 
+
+        //When user logs in this code will show the error, loading bar or start the navigation
         authViewModel.loginData.observe(viewLifecycleOwner) {
             it?.let {
                 when (it) {
@@ -83,6 +87,7 @@ class LogInFragment : Fragment() {
             )
         }
 
+        //sign up text clicklistener
         binding.textviewToSignUp.setOnClickListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }

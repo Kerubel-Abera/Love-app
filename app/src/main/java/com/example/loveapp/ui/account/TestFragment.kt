@@ -22,8 +22,8 @@ class TestFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        authViewModel =
-            ViewModelProvider(this)[AuthViewModel::class.java]
+//        authViewModel =
+//            ViewModelProvider(this)[AuthViewModel::class.java]
 
         _binding = FragmentTestBinding.inflate(inflater, container, false)
 
@@ -32,7 +32,6 @@ class TestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textviewUsername.text = authViewModel.currentUser?.displayName
         binding.button.setOnClickListener {
             findNavController().navigate(R.id.action_testFragment_to_LogInFragment)
             authViewModel.logout()

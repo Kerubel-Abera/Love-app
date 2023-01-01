@@ -35,6 +35,7 @@ class SignUpFragment : Fragment() {
 
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
 
+        //Navigation LiveData
         authViewModel.navigate.observe(viewLifecycleOwner) {
             if (it != null) {
                 findNavController().navigate(R.id.action_SignUpFragment_to_testFragment)
@@ -42,6 +43,7 @@ class SignUpFragment : Fragment() {
             }
         }
 
+        //Error Livedata
         authViewModel.errorMessage.observe(viewLifecycleOwner) {
             if (it != null) {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
@@ -49,6 +51,7 @@ class SignUpFragment : Fragment() {
             }
         }
 
+        //Checks if password is valid
         authViewModel.passwordValidated.observe(viewLifecycleOwner) {
             if (it != null) {
                 authViewModel.signup(
@@ -60,6 +63,7 @@ class SignUpFragment : Fragment() {
             }
         }
 
+        //When user signs up this code will show the error, loading bar or start the navigation
         authViewModel.signupData.observe(viewLifecycleOwner) {
             it?.let {
                 when (it) {
@@ -93,6 +97,8 @@ class SignUpFragment : Fragment() {
                 binding.edittextConfirmPassword.text.toString()
             )
         }
+
+        //log in text click listener
         binding.textviewLogIn.setOnClickListener {
             findNavController().navigate(R.id.action_SignUpFragment_to_LogInFragment)
         }
