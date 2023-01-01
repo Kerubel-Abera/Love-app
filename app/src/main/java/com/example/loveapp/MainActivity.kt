@@ -1,6 +1,7 @@
 package com.example.loveapp
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -8,8 +9,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.loveapp.databinding.ActivityMainBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 // @author Kerubel Abera
+// branch 2
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +26,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
+
+        val user = Firebase.auth.currentUser
+
+        if (user != null) {
+            Log.i("MainActivity", "current user is ${user.displayName}")
+        } else {
+            Log.i("MainActivity", "no user detected")
+        }
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each

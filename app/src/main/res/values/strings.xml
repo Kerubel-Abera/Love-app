@@ -3,4 +3,36 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title">Love App</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="log_in">Log in</string>
+    <string name="error_password_placeholder">Error password</string>
+    <string name="error_email_placeholder">Error email</string>
+    <string name="dont_have_an_account">Don\'t have an account already? Click here.</string>
+    <string name="name">name</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="already_have_an_account_click_here_to_sign_up">Already have an account? Click here to log in.</string>
+
 </resources>
