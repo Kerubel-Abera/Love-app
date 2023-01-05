@@ -1,14 +1,19 @@
-package com.example.loveapp.ui.account
+package com.example.loveapp.ui.account.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loveapp.data.AuthRepository
+import com.example.loveapp.data.FirestoreRepository
 import com.example.loveapp.data.Resource
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,7 +36,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    val currentUser: FirebaseUser? = repository.currentUser
+    private val currentUser: FirebaseUser? = repository.currentUser
 
 
     init {
@@ -70,6 +75,29 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         _signupData.value = Resource.Loading
         val result = repository.signup(name, email, password)
         _signupData.value = result
+    }
+
+    fun addNewUser() {
+        val firebaseRepository = FirestoreRepository()
+
+        viewModelScope.launch {
+            try {
+                firebaseRepository.createUser()
+            } catch (e: Exception) {
+                Log.i("AuthViewModel", e.printStackTrace().toString())
+            }
+        }
+    }
+
+    fun checkTakenUser() {
+        val firebaseRepository = FirestoreRepository()
+        viewModelScope.launch {
+            try {
+                Log.i("AuthViewModel", firebaseRepository.isTaken().toString())
+            } catch (e: Exception) {
+                Log.i("AuthViewModel", e.printStackTrace().toString())
+            }
+        }
     }
 
     fun checkPassword(password: String, confirmPassword: String) {

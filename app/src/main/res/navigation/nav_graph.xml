@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/LogInFragment"
-        android:name="com.example.loveapp.ui.account.LogInFragment"
+        android:name="com.example.loveapp.ui.account.login.LogInFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_log_in">
 
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/SignUpFragment"
-        android:name="com.example.loveapp.ui.account.SignUpFragment"
+        android:name="com.example.loveapp.ui.account.login.SignUpFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_sign_up">
 
@@ -35,9 +35,9 @@
     </fragment>
     <fragment
         android:id="@+id/testFragment"
-        android:name="com.example.loveapp.ui.account.TestFragment"
+        android:name="com.example.loveapp.ui.account.AddLoverFragment"
         android:label="fragment_test"
-        tools:layout="@layout/fragment_test" >
+        tools:layout="@layout/fragment_add_lover" >
         <action
             android:id="@+id/action_testFragment_to_LogInFragment"
             app:destination="@id/LogInFragment" />
