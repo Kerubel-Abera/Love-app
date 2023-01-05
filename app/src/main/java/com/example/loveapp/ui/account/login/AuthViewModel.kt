@@ -36,6 +36,9 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
+    private val _isTaken = MutableLiveData<Boolean?>(null)
+    val isTaken: LiveData<Boolean?> = _isTaken
+
     private val currentUser: FirebaseUser? = repository.currentUser
 
 
@@ -93,11 +96,15 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         val firebaseRepository = FirestoreRepository()
         viewModelScope.launch {
             try {
-                Log.i("AuthViewModel", firebaseRepository.isTaken().toString())
+                _isTaken.value = firebaseRepository.isTaken()
             } catch (e: Exception) {
                 Log.i("AuthViewModel", e.printStackTrace().toString())
             }
         }
+    }
+
+    fun finishTakenUserCheck() {
+        _isTaken.value = null
     }
 
     fun checkPassword(password: String, confirmPassword: String) {

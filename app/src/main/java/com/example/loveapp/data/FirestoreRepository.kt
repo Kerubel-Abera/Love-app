@@ -25,12 +25,10 @@ class FirestoreRepository {
     }
 
     suspend fun createUser() {
-        val uid = auth.currentUser?.uid
-            ?: throw Exception("No current user logged in.")
         val username = auth.currentUser?.displayName
-            ?: throw Exception("No username available.")
+            ?: throw Exception("No current user logged in.")
         val email = auth.currentUser?.email
-            ?: throw Exception("No email available.")
+            ?: throw Exception("No current user logged in.")
         withContext(Dispatchers.IO) {
             val user = User(username, false, 0)
             db.collection("users").document(email).set(user).await()

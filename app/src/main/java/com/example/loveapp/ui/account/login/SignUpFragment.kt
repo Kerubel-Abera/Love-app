@@ -9,10 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.loveapp.R
 import com.example.loveapp.data.Resource
-import com.example.loveapp.data.User
 import com.example.loveapp.databinding.FragmentSignUpBinding
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -40,7 +38,7 @@ class SignUpFragment : Fragment() {
         //Navigation LiveData
         authViewModel.navigate.observe(viewLifecycleOwner) {
             if (it != null) {
-                findNavController().navigate(R.id.action_SignUpFragment_to_testFragment)
+                findNavController().navigate(R.id.action_SignUpFragment_to_addLoverFragment)
                 authViewModel.finishNavigate()
             }
         }
@@ -81,7 +79,7 @@ class SignUpFragment : Fragment() {
                     }
                     is Resource.Success -> {
                         authViewModel.addNewUser()
-                        authViewModel.checkTakenUser()
+//                        authViewModel.checkTakenUser()
                         authViewModel.startNavigate()
                     }
                 }
