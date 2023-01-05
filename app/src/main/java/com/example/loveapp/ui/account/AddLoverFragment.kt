@@ -12,9 +12,8 @@ import com.example.loveapp.databinding.FragmentAddLoverBinding
 import com.example.loveapp.ui.account.login.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class AddLoverFragment : Fragment() {
-    private lateinit var authViewModel: AuthViewModel
+    private lateinit var addLoverViewModel: AddLoverViewModel
     private var _binding: FragmentAddLoverBinding? = null
 
     private val binding get() = _binding!!
@@ -23,10 +22,16 @@ class AddLoverFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        authViewModel =
-            ViewModelProvider(this)[AuthViewModel::class.java]
+        addLoverViewModel =
+            ViewModelProvider(this)[AddLoverViewModel::class.java]
 
         _binding = FragmentAddLoverBinding.inflate(inflater, container, false)
+
+        addLoverViewModel.username.observe(viewLifecycleOwner) {
+            if(it != null) {
+                binding.textviewGreetUser.text = resources.getString(R.string.greet_user, it)
+            }
+        }
 
         return binding.root
     }
@@ -34,9 +39,8 @@ class AddLoverFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.button.setOnClickListener {
-            authViewModel.logout()
-            findNavController().navigate(R.id.action_testFragment_to_LogInFragment)
+        binding.buttonAddLover.setOnClickListener {
+            addLoverViewModel.addLover(binding.edittextLoverEmail.text.toString())
         }
     }
 

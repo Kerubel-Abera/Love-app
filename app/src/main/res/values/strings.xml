@@ -34,5 +34,8 @@
     <string name="confirm_password">confirm password</string>
     <string name="sign_up">Sign up</string>
     <string name="already_have_an_account_click_here_to_sign_up">Already have an account? Click here to log in.</string>
+    <string name="greet_user">Hello %s!</string>
+    <string name="add_lover">Please add your lover by his or her e-mail.</string>
+    <string name="add_lover_button">Add lover</string>
 
 </resources>

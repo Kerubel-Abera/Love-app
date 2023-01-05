@@ -41,6 +41,8 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
 
     private val currentUser: FirebaseUser? = repository.currentUser
 
+    private val firebaseRepository = FirestoreRepository()
+
 
     init {
         //initialize the data to null
@@ -81,8 +83,6 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     }
 
     fun addNewUser() {
-        val firebaseRepository = FirestoreRepository()
-
         viewModelScope.launch {
             try {
                 firebaseRepository.createUser()
@@ -93,7 +93,6 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     }
 
     fun checkTakenUser() {
-        val firebaseRepository = FirestoreRepository()
         viewModelScope.launch {
             try {
                 _isTaken.value = firebaseRepository.isTaken()

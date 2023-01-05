@@ -2,6 +2,7 @@ package com.example.loveapp.data
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.auth.User
@@ -14,6 +15,10 @@ class FirestoreRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+
+    fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
 
     suspend fun getData(): User? {
         val uid = auth.currentUser?.uid
@@ -49,6 +54,18 @@ class FirestoreRepository {
                 }.await()
         }
         return isTaken
+    }
+
+    suspend fun addLover(email: String){
+        val currentUserEmail = auth.currentUser?.email
+            ?: throw Exception("No current user logged in.")
+        withContext(Dispatchers.IO) {
+            db.collection("users").document(currentUserEmail)
+                .collection("requests").document(email)
+                .set(hashMapOf(
+                    "email" to currentUserEmail
+                )).await()
+        }
     }
 
     suspend fun deleteUser() {
