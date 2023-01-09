@@ -5,3 +5,4 @@ data class User (
     val isTaken: Boolean,
     val coupleId: Int
 )
+

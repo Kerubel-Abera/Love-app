@@ -31,7 +31,9 @@
             app:destination="@id/LogInFragment" />
         <action
             android:id="@+id/action_SignUpFragment_to_addLoverFragment"
-            app:destination="@id/addLoverFragment" />
+            app:destination="@id/addLoverFragment"
+            app:popUpTo="@id/addLoverFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/addLoverFragment"
@@ -39,7 +41,9 @@
         android:label="fragment_test"
         tools:layout="@layout/fragment_add_lover" >
         <action
-            android:id="@+id/action_testFragment_to_LogInFragment"
-            app:destination="@id/LogInFragment" />
+            android:id="@+id/action_addLoverFragment_to_LogInFragment"
+            app:destination="@id/LogInFragment"
+            app:popUpTo="@id/LogInFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

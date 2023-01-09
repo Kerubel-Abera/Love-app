@@ -1,15 +1,21 @@
 package com.example.loveapp.data
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.auth.User
+import com.google.firebase.firestore.ktx.snapshots
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+const val USERS = "users"
+const val REQUESTS = "requests"
+const val NO_LOGIN_ERROR = "No current user logged in."
 
 class FirestoreRepository {
 
@@ -20,32 +26,23 @@ class FirestoreRepository {
         return auth.currentUser
     }
 
-    suspend fun getData(): User? {
-        val uid = auth.currentUser?.uid
-            ?: throw Exception("No current user logged in.")
-        return withContext(Dispatchers.IO) {
-            val document = db.collection("users").document(uid).get().await()
-            document.toObject(User::class.java)
-        }
-    }
-
     suspend fun createUser() {
         val username = auth.currentUser?.displayName
-            ?: throw Exception("No current user logged in.")
+            ?: throw Exception(NO_LOGIN_ERROR)
         val email = auth.currentUser?.email
-            ?: throw Exception("No current user logged in.")
+            ?: throw Exception(NO_LOGIN_ERROR)
         withContext(Dispatchers.IO) {
             val user = User(username, false, 0)
-            db.collection("users").document(email).set(user).await()
+            db.collection(USERS).document(email).set(user).await()
         }
     }
 
     suspend fun isTaken(): Boolean {
         var isTaken = false
         val email = auth.currentUser?.email
-            ?: throw Exception("No current user logged in.")
+            ?: throw Exception(NO_LOGIN_ERROR)
         withContext(Dispatchers.IO) {
-            db.collection("users").document(email).get()
+            db.collection(USERS).document(email).get()
                 .addOnSuccessListener { document ->
                     isTaken = document.get("taken") as Boolean
                 }
@@ -56,23 +53,54 @@ class FirestoreRepository {
         return isTaken
     }
 
-    suspend fun addLover(email: String){
-        val currentUserEmail = auth.currentUser?.email
-            ?: throw Exception("No current user logged in.")
-        withContext(Dispatchers.IO) {
-            db.collection("users").document(currentUserEmail)
-                .collection("requests").document(email)
-                .set(hashMapOf(
-                    "email" to currentUserEmail
-                )).await()
-        }
+    fun getAllRequests(): Flow<List<Request>> {
+        val email = auth.currentUser?.email
+            ?: throw Exception(NO_LOGIN_ERROR)
+        return db.collection(USERS)
+            .document(email)
+            .collection(REQUESTS)
+            .snapshots().map { snapshot ->
+                snapshot.toObjects(Request::class.java)
+            }
     }
+
+
+    suspend fun addLover(email: String): Boolean? {
+        var success: Boolean?
+        val currentUserEmail = auth.currentUser?.email
+            ?: throw Exception(NO_LOGIN_ERROR)
+        val currentUsername = auth.currentUser?.displayName
+            ?: throw Exception(NO_LOGIN_ERROR)
+        withContext(Dispatchers.IO) {
+
+            val loverAccount = db.collection(USERS).document(email).get().await()
+            Log.i("FirestoreRepository", "test value: $loverAccount")
+
+            if (!loverAccount.data.isNullOrEmpty()) {
+                db.collection(USERS).document(email)
+                    .collection(REQUESTS).document(currentUserEmail)
+                    .set(
+                        hashMapOf(
+                            "email" to currentUserEmail,
+                            "name" to currentUsername
+                        )
+                    ).await()
+                success = true
+            } else {
+                Log.i("FirestoreRepository", "error")
+                success = false
+            }
+        }
+        return success
+    }
+
+
 
     suspend fun deleteUser() {
         val email = auth.currentUser?.email
-            ?: throw Exception("No current user logged in.")
+            ?: throw Exception(NO_LOGIN_ERROR)
         return withContext(Dispatchers.IO) {
-            db.collection("users").document(email).delete().await()
+            db.collection(USERS).document(email).delete().await()
         }
     }
 }

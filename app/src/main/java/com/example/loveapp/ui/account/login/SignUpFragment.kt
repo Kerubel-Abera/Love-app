@@ -79,7 +79,6 @@ class SignUpFragment : Fragment() {
                     }
                     is Resource.Success -> {
                         authViewModel.addNewUser()
-//                        authViewModel.checkTakenUser()
                         authViewModel.startNavigate()
                     }
                 }
