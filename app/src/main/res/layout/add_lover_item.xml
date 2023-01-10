@@ -37,7 +37,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/button_accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
@@ -52,13 +52,13 @@
                 app:tint="#4CAF50" />
 
             <ImageButton
-                android:id="@+id/imageButton2"
+                android:id="@+id/button_decline"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:background="#00FFFFFF"
                 android:contentDescription="@string/empty_string"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton"
+                app:layout_constraintEnd_toStartOf="@+id/button_accept"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_close"
                 app:tint="@color/red_light" />

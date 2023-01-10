@@ -63,8 +63,22 @@ class AddLoverViewModel : ViewModel() {
                 val success = repository.addLover(email, date)
                 if (success == false) {
                     _errorMessage.value = "This e-mail does not exist."
+                } else if (success == null) {
+                    _errorMessage.value = "You cannot add yourself."
                 }
             }
+        }
+    }
+
+    fun declineRequest(request: Request) {
+        viewModelScope.launch {
+            repository.declineRequest(request)
+        }
+    }
+
+    fun acceptRequest(request: Request) {
+        viewModelScope.launch {
+            repository.acceptRequest(request)
         }
     }
 

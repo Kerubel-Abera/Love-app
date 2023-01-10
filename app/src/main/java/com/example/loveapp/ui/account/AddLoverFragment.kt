@@ -10,10 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loveapp.R
+import com.example.loveapp.data.Request
+import com.example.loveapp.data.RequestCallbacks
 import com.example.loveapp.databinding.FragmentAddLoverBinding
 import com.google.android.material.snackbar.Snackbar
 
-class AddLoverFragment : Fragment() {
+class AddLoverFragment : Fragment(), RequestCallbacks {
     private lateinit var addLoverViewModel: AddLoverViewModel
     private var _binding: FragmentAddLoverBinding? = null
 
@@ -31,7 +33,7 @@ class AddLoverFragment : Fragment() {
         _binding = FragmentAddLoverBinding.inflate(inflater, container, false)
 
         requestList = binding.rvRequests
-        requestList.adapter = AddLoverAdapter(emptyList())
+        requestList.adapter = AddLoverAdapter(this, emptyList())
         requestList.layoutManager = LinearLayoutManager(context)
 
         addLoverViewModel.requests.observe(viewLifecycleOwner) {
@@ -76,6 +78,14 @@ class AddLoverFragment : Fragment() {
                 date
             )
         }
+    }
+
+    override fun onAccept(request: Request) {
+        addLoverViewModel.acceptRequest(request)
+    }
+
+    override fun onDecline(request: Request) {
+        addLoverViewModel.declineRequest(request)
     }
 
 }

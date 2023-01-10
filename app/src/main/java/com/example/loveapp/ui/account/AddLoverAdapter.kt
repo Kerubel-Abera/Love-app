@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loveapp.data.Request
+import com.example.loveapp.data.RequestCallbacks
 import com.example.loveapp.databinding.AddLoverItemBinding
 
-class AddLoverAdapter(private var requests: List<Request>) :
+class AddLoverAdapter(private val callback: RequestCallbacks, private var requests: List<Request>) :
     RecyclerView.Adapter<AddLoverAdapter.ViewHolder>() {
 
     fun submitList(requests: List<Request>) {
@@ -25,6 +26,12 @@ class AddLoverAdapter(private var requests: List<Request>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val request = requests[position]
         holder.binding.textviewName.text = request.name
+        holder.binding.buttonDecline.setOnClickListener {
+            callback.onDecline(request)
+        }
+        holder.binding.buttonAccept.setOnClickListener {
+            callback.onAccept(request)
+        }
     }
 
     override fun getItemCount(): Int {
