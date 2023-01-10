@@ -1,6 +1,5 @@
 package com.example.loveapp.ui.account
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,9 +9,7 @@ import com.example.loveapp.data.Request
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.Month
-import java.util.Calendar
+import java.util.*
 
 class AddLoverViewModel : ViewModel() {
 
@@ -34,12 +31,12 @@ class AddLoverViewModel : ViewModel() {
     private var job: Job
 
     init {
-        if (currentUser == null){
+        if (currentUser == null) {
             _navBackToLogin.value = true
         }
 
         job = viewModelScope.launch {
-            repository.getAllRequests().cancellable().collect{ requests ->
+            repository.getAllRequests().cancellable().collect { requests ->
                 _requests.value = requests
             }
         }
@@ -47,23 +44,23 @@ class AddLoverViewModel : ViewModel() {
         _errorMessage.value = null
     }
 
-    fun stopRequestListListener(){
+    fun stopRequestListListener() {
         job.cancel()
     }
 
-    fun addLover(email: String, day: Int, month: Int, year: Int) {
+    fun addLover(email: String, date: List<Int>) {
         val loverDate = Calendar.getInstance()
         loverDate.isLenient = false
-        loverDate.set(year, month - 1, day)
+        loverDate.set(date[2], date[1] - 1, date[0])
         val validDate = validateDate(loverDate)
 
-        if(validDate != null){
+        if (validDate != null) {
             _errorMessage.value = validDate
         } else if (email.isEmpty()) {
             _errorMessage.value = "Please fill in your lover's e-mail."
         } else {
             viewModelScope.launch {
-                val success = repository.addLover(email, day, month, year)
+                val success = repository.addLover(email, date)
                 if (success == false) {
                     _errorMessage.value = "This e-mail does not exist."
                 }
@@ -71,25 +68,25 @@ class AddLoverViewModel : ViewModel() {
         }
     }
 
-    private fun validateDate(loverDate: Calendar) : String? {
+    private fun validateDate(loverDate: Calendar): String? {
         try {
             loverDate.get(Calendar.MONTH)
         } catch (_: Exception) {
             return "Invalid date."
         }
 
-        return if(loverDate.after(Calendar.getInstance())) {
+        return if (loverDate.after(Calendar.getInstance())) {
             "This date is in the future."
         } else {
             null
         }
     }
 
-    fun onNavBackToLoginCompleted(){
+    fun onNavBackToLoginCompleted() {
         _navBackToLogin.value = null
     }
 
-    fun completeErrorMessage(){
+    fun completeErrorMessage() {
         _errorMessage.value = null
     }
 }

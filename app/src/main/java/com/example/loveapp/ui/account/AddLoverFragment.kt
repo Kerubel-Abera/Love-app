@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loveapp.R
 import com.example.loveapp.databinding.FragmentAddLoverBinding
-import com.example.loveapp.ui.account.login.AuthViewModel
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
 
 class AddLoverFragment : Fragment() {
     private lateinit var addLoverViewModel: AddLoverViewModel
@@ -42,20 +40,20 @@ class AddLoverFragment : Fragment() {
             }
         }
 
-        addLoverViewModel.navBackToLogin.observe(viewLifecycleOwner){
-            if(it != null) {
+        addLoverViewModel.navBackToLogin.observe(viewLifecycleOwner) {
+            if (it != null) {
                 findNavController().navigate(R.id.action_addLoverFragment_to_LogInFragment)
                 addLoverViewModel.onNavBackToLoginCompleted()
             }
         }
 
         addLoverViewModel.username.observe(viewLifecycleOwner) {
-            if(it != null) {
+            if (it != null) {
                 binding.textviewGreetUser.text = resources.getString(R.string.greet_user, it)
             }
         }
         addLoverViewModel.errorMessage.observe(viewLifecycleOwner) {
-            if(it != null) {
+            if (it != null) {
                 Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
                 addLoverViewModel.completeErrorMessage()
             }
@@ -68,11 +66,14 @@ class AddLoverFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAddLover.setOnClickListener {
-            addLoverViewModel.addLover(
-                binding.edittextLoverEmail.text.toString(),
+            val date = listOf(
                 binding.edittextLoverDay.text.toString().toInt(),
                 binding.edittextLoverMonth.text.toString().toInt(),
                 binding.edittextLoverYear.text.toString().toInt()
+            )
+            addLoverViewModel.addLover(
+                binding.edittextLoverEmail.text.toString(),
+                date
             )
         }
     }

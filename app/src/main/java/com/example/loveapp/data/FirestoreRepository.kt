@@ -1,15 +1,13 @@
 package com.example.loveapp.data
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.snapshots
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -65,7 +63,7 @@ class FirestoreRepository {
     }
 
 
-    suspend fun addLover(email: String, day: Int, month: Int, year: Int): Boolean? {
+    suspend fun addLover(email: String, date: List<Int>): Boolean? {
         var success: Boolean?
         val currentUserEmail = auth.currentUser?.email
             ?: throw Exception(NO_LOGIN_ERROR)
@@ -83,9 +81,7 @@ class FirestoreRepository {
                         hashMapOf(
                             "email" to currentUserEmail,
                             "name" to currentUsername,
-                            "day" to day,
-                            "month" to month,
-                            "year" to year
+                            "date" to date
                         )
                     ).await()
                 success = true
@@ -96,7 +92,6 @@ class FirestoreRepository {
         }
         return success
     }
-
 
 
     suspend fun deleteUser() {

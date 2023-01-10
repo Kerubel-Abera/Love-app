@@ -38,11 +38,11 @@ class LogInFragment : Fragment() {
         _binding = FragmentLogInBinding.inflate(inflater, container, false)
 
         authViewModel.isTaken.observe(viewLifecycleOwner) {
-            when(it){
+            when (it) {
                 true -> {
                     startActivity(Intent(this.context, MainActivity::class.java))
                     authViewModel.finishTakenUserCheck()
-                    }
+                }
                 false -> {
                     findNavController().navigate(R.id.action_LogInFragment_to_addLoverFragment)
                     authViewModel.finishTakenUserCheck()

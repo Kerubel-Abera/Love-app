@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.loveapp.data.Request
 import com.example.loveapp.databinding.AddLoverItemBinding
 
-class AddLoverAdapter(private var requests: List<Request>) : RecyclerView.Adapter<AddLoverAdapter.ViewHolder>() {
+class AddLoverAdapter(private var requests: List<Request>) :
+    RecyclerView.Adapter<AddLoverAdapter.ViewHolder>() {
 
     fun submitList(requests: List<Request>) {
         this.requests = requests
@@ -16,7 +17,8 @@ class AddLoverAdapter(private var requests: List<Request>) : RecyclerView.Adapte
     class ViewHolder(val binding: AddLoverItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = AddLoverItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            AddLoverItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
