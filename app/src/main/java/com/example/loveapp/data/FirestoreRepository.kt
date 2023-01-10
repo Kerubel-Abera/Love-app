@@ -65,7 +65,7 @@ class FirestoreRepository {
     }
 
 
-    suspend fun addLover(email: String): Boolean? {
+    suspend fun addLover(email: String, day: Int, month: Int, year: Int): Boolean? {
         var success: Boolean?
         val currentUserEmail = auth.currentUser?.email
             ?: throw Exception(NO_LOGIN_ERROR)
@@ -82,7 +82,10 @@ class FirestoreRepository {
                     .set(
                         hashMapOf(
                             "email" to currentUserEmail,
-                            "name" to currentUsername
+                            "name" to currentUsername,
+                            "day" to day,
+                            "month" to month,
+                            "year" to year
                         )
                     ).await()
                 success = true

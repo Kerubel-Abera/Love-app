@@ -68,7 +68,12 @@ class AddLoverFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAddLover.setOnClickListener {
-            addLoverViewModel.addLover(binding.edittextLoverEmail.text.toString())
+            addLoverViewModel.addLover(
+                binding.edittextLoverEmail.text.toString(),
+                binding.edittextLoverDay.text.toString().toInt(),
+                binding.edittextLoverMonth.text.toString().toInt(),
+                binding.edittextLoverYear.text.toString().toInt()
+            )
         }
     }
 
