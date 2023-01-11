@@ -39,7 +39,7 @@ class FirestoreRepository {
         }
     }
 
-    suspend fun isTaken(): Boolean {
+    suspend fun checkIsTakenOnce(): Boolean {
         var isTaken = false
         val email = auth.currentUser?.email
             ?: throw Exception(NO_LOGIN_ERROR)
@@ -54,6 +54,17 @@ class FirestoreRepository {
                 }.await()
         }
         return isTaken
+    }
+
+    fun isTaken(): Flow<Boolean> {
+        val email = auth.currentUser?.email
+            ?: throw Exception(NO_LOGIN_ERROR)
+        val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
+        return db.collection(USERS)
+            .document(encodedMail)
+            .snapshots().map { snapshot ->
+                snapshot.get("taken") as Boolean
+            }
     }
 
     fun getAllRequests(): Flow<List<Request>> {

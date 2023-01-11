@@ -1,5 +1,6 @@
 package com.example.loveapp.ui.account
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.loveapp.MainActivity
 import com.example.loveapp.R
 import com.example.loveapp.data.Request
 import com.example.loveapp.data.RequestCallbacks
@@ -35,6 +37,13 @@ class AddLoverFragment : Fragment(), RequestCallbacks {
         requestList = binding.rvRequests
         requestList.adapter = AddLoverAdapter(this, emptyList())
         requestList.layoutManager = LinearLayoutManager(context)
+
+        addLoverViewModel.isTaken.observe(viewLifecycleOwner) {
+            if (it) {
+                startActivity(Intent(this.context, MainActivity::class.java))
+                addLoverViewModel.stopJob()
+            }
+        }
 
         addLoverViewModel.requests.observe(viewLifecycleOwner) {
             it?.let { requests ->

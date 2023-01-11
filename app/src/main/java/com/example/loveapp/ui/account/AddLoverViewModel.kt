@@ -1,5 +1,6 @@
 package com.example.loveapp.ui.account
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,24 +29,38 @@ class AddLoverViewModel : ViewModel() {
     private val _requests = MutableLiveData<List<Request>?>()
     val requests: LiveData<List<Request>?> = _requests
 
-    private var job: Job
+    private val _isTaken = MutableLiveData<Boolean>()
+    val isTaken: LiveData<Boolean> = _isTaken
+
+
+    private var requestsJob: Job
+    private var isTakenJob: Job
 
     init {
         if (currentUser == null) {
             _navBackToLogin.value = true
         }
 
-        job = viewModelScope.launch {
+        requestsJob = viewModelScope.launch {
+            Log.i("addLoverViewModel", "job started")
             repository.getAllRequests().cancellable().collect { requests ->
                 _requests.value = requests
+            }
+        }
+        isTakenJob = viewModelScope.launch {
+            Log.i("addLoverViewModel", "second job started")
+            repository.isTaken().cancellable().collect { isTaken ->
+                Log.i("addLoverViewModel", "isTaken changed! $isTaken")
+                _isTaken.value = isTaken
             }
         }
         _username.value = currentUser?.displayName
         _errorMessage.value = null
     }
 
-    fun stopRequestListListener() {
-        job.cancel()
+    fun stopJob() {
+        requestsJob.cancel()
+        isTakenJob.cancel()
     }
 
     fun addLover(email: String, date: List<Int>) {
