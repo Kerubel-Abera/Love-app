@@ -92,9 +92,11 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     }
 
     fun checkTakenUser() {
+        var isTaken = false
         viewModelScope.launch {
             try {
-                _isTaken.value = firebaseRepository.checkIsTakenOnce()
+                isTaken = firebaseRepository.checkIsTakenOnce()
+                _isTaken.value = isTaken
             } catch (e: Exception) {
                 Log.i("AuthViewModel", e.printStackTrace().toString())
             }

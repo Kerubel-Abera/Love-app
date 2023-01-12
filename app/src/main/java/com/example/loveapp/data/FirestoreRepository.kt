@@ -39,10 +39,27 @@ class FirestoreRepository {
         }
     }
 
+    fun onStart(): Boolean {
+        var isTaken = false
+        val email = auth.currentUser?.email
+            ?: return false
+        val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
+        db.collection(USERS).document(encodedMail).get()
+            .addOnSuccessListener { document ->
+                isTaken = document.get("taken") as Boolean
+                Log.i("FirestoreRepository", "insucceslistener"+ isTaken.toString())
+            }
+            .addOnFailureListener {
+                Log.i("FirestoreRepository", it.message.toString())
+            }
+        Log.i("FirestoreRepository", isTaken.toString())
+        return isTaken
+    }
+
     suspend fun checkIsTakenOnce(): Boolean {
         var isTaken = false
         val email = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
+            ?: return isTaken
         withContext(Dispatchers.IO) {
             val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
             db.collection(USERS).document(encodedMail).get()
