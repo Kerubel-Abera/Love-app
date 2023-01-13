@@ -25,6 +25,9 @@ class FirestoreRepository {
         return auth.currentUser
     }
 
+    fun logout(){
+        auth.signOut()
+    }
 
 
     suspend fun createUser() {
@@ -47,7 +50,7 @@ class FirestoreRepository {
         db.collection(USERS).document(encodedMail).get()
             .addOnSuccessListener { document ->
                 isTaken = document.get("taken") as Boolean
-                Log.i("FirestoreRepository", "insucceslistener"+ isTaken.toString())
+                Log.i("FirestoreRepository", "insucceslistener" + isTaken.toString())
             }
             .addOnFailureListener {
                 Log.i("FirestoreRepository", it.message.toString())
@@ -97,8 +100,8 @@ class FirestoreRepository {
     }
 
 
-    suspend fun addLover(email: String, date: List<Int>): Boolean? {
-        var success: Boolean?
+    suspend fun addLover(email: String, date: List<Int>): String? {
+        var returnValue: String?
         val currentUserEmail = auth.currentUser?.email
             ?: throw Exception(NO_LOGIN_ERROR)
         val currentUsername = auth.currentUser?.displayName
@@ -106,16 +109,18 @@ class FirestoreRepository {
         val encodedMail = Base64.encodeToString(currentUserEmail.toByteArray(), Base64.DEFAULT)
         val encodedLoverMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
 
-        if(email == currentUserEmail) {
-            return null
+        if (email == currentUserEmail) {
+            returnValue = "You cannot add yourself."
+            return returnValue
         }
 
         withContext(Dispatchers.IO) {
 
             val loverAccount = db.collection(USERS).document(encodedLoverMail).get().await()
             Log.i("FirestoreRepository", "test value: $loverAccount")
+            val isTaken = loverAccount.get("taken") as Boolean
 
-            if (!loverAccount.data.isNullOrEmpty()) {
+            if (!loverAccount.data.isNullOrEmpty() && !isTaken) {
                 db.collection(USERS).document(encodedLoverMail)
                     .collection(REQUESTS).document(encodedMail)
                     .set(
@@ -125,13 +130,15 @@ class FirestoreRepository {
                             "date" to date
                         )
                     ).await()
-                success = true
-            } else {
+                returnValue = null
+            } else if(isTaken){
                 Log.i("FirestoreRepository", "error")
-                success = false
+                returnValue = "User is already taken."
+            } else {
+                returnValue = "User does not exist."
             }
         }
-        return success
+        return returnValue
     }
 
     suspend fun declineRequest(request: Request) {
@@ -168,15 +175,19 @@ class FirestoreRepository {
                 ).await()
             val coupleId = coupleRef.id
 
-            db.collection(USERS).document(encodedMail).update("taken", true, "coupleId", coupleId).await()
-            db.collection(USERS).document(encodedLoverMail).update("taken", true, "coupleId", coupleId).await()
-            val querySnapshot = db.collection(USERS).document(encodedMail).collection(REQUESTS).get().await()
-            val querySnapshot2 = db.collection(USERS).document(encodedLoverMail).collection(REQUESTS).get().await()
+            db.collection(USERS).document(encodedMail).update("taken", true, "coupleId", coupleId)
+                .await()
+            db.collection(USERS).document(encodedLoverMail)
+                .update("taken", true, "coupleId", coupleId).await()
+            val querySnapshot =
+                db.collection(USERS).document(encodedMail).collection(REQUESTS).get().await()
+            val querySnapshot2 =
+                db.collection(USERS).document(encodedLoverMail).collection(REQUESTS).get().await()
             val batch = db.batch()
-            for(document in querySnapshot) {
+            for (document in querySnapshot) {
                 batch.delete(document.reference)
             }
-            for(document in querySnapshot2) {
+            for (document in querySnapshot2) {
                 batch.delete(document.reference)
             }
             batch.commit().await()

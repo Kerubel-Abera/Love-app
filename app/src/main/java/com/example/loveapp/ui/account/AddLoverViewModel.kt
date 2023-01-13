@@ -63,6 +63,10 @@ class AddLoverViewModel : ViewModel() {
         isTakenJob.cancel()
     }
 
+    fun showErrorMessage(error: String){
+        _errorMessage.value = error
+    }
+
     fun addLover(email: String, date: List<Int>) {
         val loverDate = Calendar.getInstance()
         loverDate.isLenient = false
@@ -75,11 +79,9 @@ class AddLoverViewModel : ViewModel() {
             _errorMessage.value = "Please fill in your lover's e-mail."
         } else {
             viewModelScope.launch {
-                val success = repository.addLover(email, date)
-                if (success == false) {
-                    _errorMessage.value = "This e-mail does not exist."
-                } else if (success == null) {
-                    _errorMessage.value = "You cannot add yourself."
+                val error = repository.addLover(email, date)
+                if (error != null) {
+                    _errorMessage.value = error
                 }
             }
         }

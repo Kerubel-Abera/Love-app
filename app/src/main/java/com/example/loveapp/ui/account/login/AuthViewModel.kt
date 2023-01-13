@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,9 +37,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     val isTaken: LiveData<Boolean?> = _isTaken
 
     private val currentUser: FirebaseUser? = repository.currentUser
-    private val firebaseRepository = FirestoreRepository()
-
-    private lateinit var isTakenJob: Job
+    private val firestoreRepository = FirestoreRepository()
 
 
     init {
@@ -84,7 +81,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     fun addNewUser() {
         viewModelScope.launch {
             try {
-                firebaseRepository.createUser()
+                firestoreRepository.createUser()
             } catch (e: Exception) {
                 Log.i("AuthViewModel", e.printStackTrace().toString())
             }
@@ -95,7 +92,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         var isTaken = false
         viewModelScope.launch {
             try {
-                isTaken = firebaseRepository.checkIsTakenOnce()
+                isTaken = firestoreRepository.checkIsTakenOnce()
                 _isTaken.value = isTaken
             } catch (e: Exception) {
                 Log.i("AuthViewModel", e.printStackTrace().toString())

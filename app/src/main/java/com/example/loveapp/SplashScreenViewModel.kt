@@ -18,7 +18,4 @@ class SplashScreenViewModel : ViewModel() {
             _isTaken.value = repository.checkIsTakenOnce()
         }
     }
-    fun onStart(): Boolean {
-        return repository.onStart()
-    }
 }

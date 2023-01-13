@@ -2,6 +2,7 @@ package com.example.loveapp.ui.account
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,15 +78,24 @@ class AddLoverFragment : Fragment(), RequestCallbacks {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAddLover.setOnClickListener {
-            val date = listOf(
-                binding.edittextLoverDay.text.toString().toInt(),
-                binding.edittextLoverMonth.text.toString().toInt(),
-                binding.edittextLoverYear.text.toString().toInt()
-            )
-            addLoverViewModel.addLover(
-                binding.edittextLoverEmail.text.toString(),
-                date
-            )
+
+            if (!TextUtils.isEmpty(binding.edittextLoverDay.text) &&
+                !TextUtils.isEmpty(binding.edittextLoverMonth.text) &&
+                !TextUtils.isEmpty(binding.edittextLoverMonth.text)
+            ) {
+                val date = listOf(
+                    binding.edittextLoverDay.text.toString().toInt(),
+                    binding.edittextLoverMonth.text.toString().toInt(),
+                    binding.edittextLoverYear.text.toString().toInt()
+                )
+                addLoverViewModel.addLover(
+                    binding.edittextLoverEmail.text.toString(),
+                    date
+                )
+            } else {
+                addLoverViewModel.showErrorMessage("Fill in the date.")
+            }
+
         }
     }
 
