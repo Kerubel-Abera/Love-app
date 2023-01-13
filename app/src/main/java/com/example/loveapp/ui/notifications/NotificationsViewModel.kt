@@ -9,7 +9,7 @@ class NotificationsViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>()
     val text: LiveData<String> = _text
-    private val firestoreRepository = FirestoreRepository()
+    private val firestoreRepository = FirestoreRepository.getInstance()
 
     private val _logOut = MutableLiveData<Boolean>()
     val logOut: LiveData<Boolean> = _logOut

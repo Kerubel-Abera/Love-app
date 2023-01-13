@@ -8,7 +8,7 @@ import com.example.loveapp.data.FirestoreRepository
 import kotlinx.coroutines.launch
 
 class SplashScreenViewModel : ViewModel() {
-    private val repository = FirestoreRepository()
+    private val repository = FirestoreRepository.getInstance()
 
     private val _isTaken = MutableLiveData<Boolean>()
     val isTaken: LiveData<Boolean> = _isTaken

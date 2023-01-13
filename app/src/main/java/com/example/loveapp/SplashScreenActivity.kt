@@ -13,9 +13,6 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreenViewModel = ViewModelProvider(this)[SplashScreenViewModel::class.java]
-
-        //setContentView(R.layout.activity_splash_screen)
-
         splashScreenViewModel.isTaken.observe(this) {
             if (it) {
                 startActivity(Intent(this, MainActivity::class.java))

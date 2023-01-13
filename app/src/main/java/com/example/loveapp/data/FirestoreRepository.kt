@@ -15,26 +15,48 @@ import kotlinx.coroutines.withContext
 const val USERS = "users"
 const val REQUESTS = "requests"
 const val NO_LOGIN_ERROR = "No current user logged in."
+const val NAME = 1
+const val MAIL = 2
 
-class FirestoreRepository {
+class FirestoreRepository private constructor(){
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
+    companion object {
+        private var instance: FirestoreRepository? = null
+        fun getInstance() : FirestoreRepository {
+            if (instance == null) {
+                instance = FirestoreRepository()
+            }
+            return instance!!
+        }
+    }
+    /** Simple function that returns the firebase user. **/
     fun getCurrentUser(): FirebaseUser? {
         return auth.currentUser
     }
 
-    fun logout(){
+    /** Simple function that logs the firebase user out. **/
+    fun logout() {
         auth.signOut()
     }
 
+    private fun getMailOrName(choice: Int): String {
+        when (choice) {
+            NAME -> return getCurrentUser()?.displayName ?: throw Exception(NO_LOGIN_ERROR)
+            MAIL -> return getCurrentUser()?.email ?: throw Exception(NO_LOGIN_ERROR)
+        }
+        return ""
+    }
 
+    /**
+     * This function pushes the logged in user his username and email
+     * to the firestore database with isTaken to false and a 0 coupleid
+     */
     suspend fun createUser() {
-        val username = auth.currentUser?.displayName
-            ?: throw Exception(NO_LOGIN_ERROR)
-        val email = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val username = getMailOrName(NAME)
+        val email = getMailOrName(MAIL)
         withContext(Dispatchers.IO) {
             val user = User(email, username, false, 0)
             val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
@@ -42,27 +64,15 @@ class FirestoreRepository {
         }
     }
 
-    fun onStart(): Boolean {
-        var isTaken = false
-        val email = auth.currentUser?.email
-            ?: return false
-        val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
-        db.collection(USERS).document(encodedMail).get()
-            .addOnSuccessListener { document ->
-                isTaken = document.get("taken") as Boolean
-                Log.i("FirestoreRepository", "insucceslistener" + isTaken.toString())
-            }
-            .addOnFailureListener {
-                Log.i("FirestoreRepository", it.message.toString())
-            }
-        Log.i("FirestoreRepository", isTaken.toString())
-        return isTaken
-    }
-
+    /**
+     * This function checks the isTaken variable of a specific user one time
+     * and returns this variable.
+     *
+     * @return the isTaken field from firestore of type Boolean
+     */
     suspend fun checkIsTakenOnce(): Boolean {
         var isTaken = false
-        val email = auth.currentUser?.email
-            ?: return isTaken
+        val email = getMailOrName(MAIL)
         withContext(Dispatchers.IO) {
             val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
             db.collection(USERS).document(encodedMail).get()
@@ -76,9 +86,15 @@ class FirestoreRepository {
         return isTaken
     }
 
+
+    /**
+     * This function will observe the isTaken variable in a user his firestore
+     * database. When the variable changes it will return.
+     *
+     * @return the isTaken field from firestore of type Boolean
+     */
     fun isTaken(): Flow<Boolean> {
-        val email = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val email = getMailOrName(MAIL)
         val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
         return db.collection(USERS)
             .document(encodedMail)
@@ -87,9 +103,14 @@ class FirestoreRepository {
             }
     }
 
+    /**
+     * This function checks the requests collection of a user and will
+     * return a new list of Requests every time a request gets added
+     *
+     * @return the list of requests
+     */
     fun getAllRequests(): Flow<List<Request>> {
-        val email = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val email = getMailOrName(MAIL)
         val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
         return db.collection(USERS)
             .document(encodedMail)
@@ -100,12 +121,18 @@ class FirestoreRepository {
     }
 
 
+    /**
+     * This function adds a request to the corresponding lovers firestore location
+     *
+     * @param email the email of the lover
+     * @param date the date when the lover and user got together
+     *
+     * @return an error string if needed
+     */
     suspend fun addLover(email: String, date: List<Int>): String? {
         var returnValue: String?
-        val currentUserEmail = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
-        val currentUsername = auth.currentUser?.displayName
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val currentUserEmail = getMailOrName(MAIL)
+        val currentUsername = getMailOrName(NAME)
         val encodedMail = Base64.encodeToString(currentUserEmail.toByteArray(), Base64.DEFAULT)
         val encodedLoverMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
 
@@ -117,7 +144,6 @@ class FirestoreRepository {
         withContext(Dispatchers.IO) {
 
             val loverAccount = db.collection(USERS).document(encodedLoverMail).get().await()
-            Log.i("FirestoreRepository", "test value: $loverAccount")
             val isTaken = loverAccount.get("taken") as Boolean
 
             if (!loverAccount.data.isNullOrEmpty() && !isTaken) {
@@ -131,8 +157,7 @@ class FirestoreRepository {
                         )
                     ).await()
                 returnValue = null
-            } else if(isTaken){
-                Log.i("FirestoreRepository", "error")
+            } else if (isTaken) {
                 returnValue = "User is already taken."
             } else {
                 returnValue = "User does not exist."
@@ -141,12 +166,15 @@ class FirestoreRepository {
         return returnValue
     }
 
+    /**
+     * This function declines a request by removing it from the requests collection
+     *
+     * @param request object of the corresponding request
+     */
     suspend fun declineRequest(request: Request) {
-        val currentUserEmail = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val currentUserEmail = getMailOrName(MAIL)
         val encodedMail = Base64.encodeToString(currentUserEmail.toByteArray(), Base64.DEFAULT)
         val encodedLoverMail = Base64.encodeToString(request.email.toByteArray(), Base64.DEFAULT)
-        Log.i("FirestoreRepository", "$request.")
         withContext(Dispatchers.IO) {
             db.collection(USERS).document(encodedMail)
                 .collection(REQUESTS).document(encodedLoverMail)
@@ -155,11 +183,16 @@ class FirestoreRepository {
         }
     }
 
+    /**
+     * This function accepts a request by creating a couples document and
+     * updating their coupleid and istaken variable. And it also deletes the requests if
+     * there are other pending requests left.
+     *
+     * @param request object of the corresponding request
+     */
     suspend fun acceptRequest(request: Request) {
-        val currentUserEmail = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
-        val currentUsername = auth.currentUser?.displayName
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val currentUserEmail = getMailOrName(MAIL)
+        val currentUsername = getMailOrName(NAME)
 
         val encodedMail = Base64.encodeToString(currentUserEmail.toByteArray(), Base64.DEFAULT)
         val encodedLoverMail = Base64.encodeToString(request.email.toByteArray(), Base64.DEFAULT)
@@ -199,8 +232,7 @@ class FirestoreRepository {
 
 
     suspend fun deleteUser() {
-        val email = auth.currentUser?.email
-            ?: throw Exception(NO_LOGIN_ERROR)
+        val email = getMailOrName(MAIL)
         val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
         return withContext(Dispatchers.IO) {
             db.collection(USERS).document(encodedMail).delete().await()

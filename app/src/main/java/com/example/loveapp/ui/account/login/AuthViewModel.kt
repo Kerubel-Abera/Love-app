@@ -37,7 +37,7 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     val isTaken: LiveData<Boolean?> = _isTaken
 
     private val currentUser: FirebaseUser? = repository.currentUser
-    private val firestoreRepository = FirestoreRepository()
+    private val firestoreRepository = FirestoreRepository.getInstance()
 
 
     init {

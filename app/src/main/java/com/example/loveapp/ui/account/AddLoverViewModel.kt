@@ -14,7 +14,7 @@ import java.util.*
 
 class AddLoverViewModel : ViewModel() {
 
-    private val repository = FirestoreRepository()
+    private val repository = FirestoreRepository.getInstance()
     private val currentUser = repository.getCurrentUser()
 
     private val _username = MutableLiveData<String>()
