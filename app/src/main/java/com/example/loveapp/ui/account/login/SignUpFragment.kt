@@ -1,4 +1,4 @@
-package com.example.loveapp.ui.account
+package com.example.loveapp.ui.account.login
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,18 +9,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.loveapp.R
 import com.example.loveapp.data.Resource
-import com.example.loveapp.databinding.FragmentLogInBinding
+import com.example.loveapp.databinding.FragmentSignUpBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * A simple [Fragment] subclass as the default destination in the navigation.
+ * A simple [Fragment] subclass as the second destination in the navigation.
  */
 @AndroidEntryPoint
-class LogInFragment : Fragment() {
+class SignUpFragment : Fragment() {
 
     private lateinit var authViewModel: AuthViewModel
-    private var _binding: FragmentLogInBinding? = null
+    private var _binding: FragmentSignUpBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -33,12 +33,12 @@ class LogInFragment : Fragment() {
         authViewModel =
             ViewModelProvider(this)[AuthViewModel::class.java]
 
-        _binding = FragmentLogInBinding.inflate(inflater, container, false)
+        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
 
         //Navigation LiveData
         authViewModel.navigate.observe(viewLifecycleOwner) {
             if (it != null) {
-                findNavController().navigate(R.id.action_LogInFragment_to_testFragment)
+                findNavController().navigate(R.id.action_SignUpFragment_to_addLoverFragment)
                 authViewModel.finishNavigate()
             }
         }
@@ -51,22 +51,34 @@ class LogInFragment : Fragment() {
             }
         }
 
+        //Checks if password is valid
+        authViewModel.passwordValidated.observe(viewLifecycleOwner) {
+            if (it != null) {
+                authViewModel.signup(
+                    binding.edittextUsername.text.toString(),
+                    binding.edittextEmail.text.toString(),
+                    binding.edittextPassword.text.toString()
+                )
+                authViewModel.validatedPassword()
+            }
+        }
 
-        //When user logs in this code will show the error, loading bar or start the navigation
-        authViewModel.loginData.observe(viewLifecycleOwner) {
+        //When user signs up this code will show the error, loading bar or start the navigation
+        authViewModel.signupData.observe(viewLifecycleOwner) {
             it?.let {
                 when (it) {
                     is Resource.Failure -> {
                         authViewModel.showErrorMessage(it.exception)
-                        binding.buttonLogIn.visibility = View.VISIBLE
+                        binding.buttonSignUp.visibility = View.VISIBLE
                         binding.progressbarLoading.visibility = View.GONE
 
                     }
                     Resource.Loading -> {
-                        binding.buttonLogIn.visibility = View.INVISIBLE
+                        binding.buttonSignUp.visibility = View.INVISIBLE
                         binding.progressbarLoading.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
+                        authViewModel.addNewUser()
                         authViewModel.startNavigate()
                     }
                 }
@@ -80,16 +92,16 @@ class LogInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonLogIn.setOnClickListener {
-            authViewModel.login(
-                binding.edittextEmail.text.toString(),
-                binding.edittextPassword.text.toString()
+        binding.buttonSignUp.setOnClickListener {
+            authViewModel.checkPassword(
+                binding.edittextPassword.text.toString(),
+                binding.edittextConfirmPassword.text.toString()
             )
         }
 
-        //sign up text clicklistener
-        binding.textviewToSignUp.setOnClickListener {
-            findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
+        //log in text click listener
+        binding.textviewLogIn.setOnClickListener {
+            findNavController().navigate(R.id.action_SignUpFragment_to_LogInFragment)
         }
     }
 

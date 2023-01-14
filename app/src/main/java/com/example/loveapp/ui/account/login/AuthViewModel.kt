@@ -1,10 +1,12 @@
-package com.example.loveapp.ui.account
+package com.example.loveapp.ui.account.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loveapp.data.AuthRepository
+import com.example.loveapp.data.FirestoreRepository
 import com.example.loveapp.data.Resource
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -31,7 +33,11 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    val currentUser: FirebaseUser? = repository.currentUser
+    private val _isTaken = MutableLiveData<Boolean?>(null)
+    val isTaken: LiveData<Boolean?> = _isTaken
+
+    private val currentUser: FirebaseUser? = repository.currentUser
+    private val firestoreRepository = FirestoreRepository.getInstance()
 
 
     init {
@@ -70,6 +76,32 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         _signupData.value = Resource.Loading
         val result = repository.signup(name, email, password)
         _signupData.value = result
+    }
+
+    fun addNewUser() {
+        viewModelScope.launch {
+            try {
+                firestoreRepository.createUser()
+            } catch (e: Exception) {
+                Log.i("AuthViewModel", e.printStackTrace().toString())
+            }
+        }
+    }
+
+    fun checkTakenUser() {
+        var isTaken = false
+        viewModelScope.launch {
+            try {
+                isTaken = firestoreRepository.checkIsTakenOnce()
+                _isTaken.value = isTaken
+            } catch (e: Exception) {
+                Log.i("AuthViewModel", e.printStackTrace().toString())
+            }
+        }
+    }
+
+    fun finishTakenUserCheck() {
+        _isTaken.value = null
     }
 
     fun checkPassword(password: String, confirmPassword: String) {

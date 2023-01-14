@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_primary"
-    tools:context=".ui.account.SignUpFragment">
+    tools:context=".ui.account.login.SignUpFragment">
 
     <TextView
         android:id="@+id/textview_title"
@@ -44,12 +44,11 @@
         android:ems="10"
         android:hint="@string/name"
         android:inputType="textPersonName"
+        android:maxLength="20"
         app:layout_constraintBottom_toTopOf="@+id/edittext_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/edittext_email"
@@ -132,6 +131,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/button_sign_up"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

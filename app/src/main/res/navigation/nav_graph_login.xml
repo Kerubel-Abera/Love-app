@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/LogInFragment"
-        android:name="com.example.loveapp.ui.account.LogInFragment"
+        android:name="com.example.loveapp.ui.account.login.LogInFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_log_in">
 
@@ -15,14 +15,14 @@
             android:id="@+id/action_LoginFragment_to_SignUpFragment"
             app:destination="@id/SignUpFragment" />
         <action
-            android:id="@+id/action_LogInFragment_to_testFragment"
-            app:destination="@id/testFragment"
-            app:popUpTo="@id/testFragment"
+            android:id="@+id/action_LogInFragment_to_addLoverFragment"
+            app:destination="@id/addLoverFragment"
+            app:popUpTo="@id/addLoverFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/SignUpFragment"
-        android:name="com.example.loveapp.ui.account.SignUpFragment"
+        android:name="com.example.loveapp.ui.account.login.SignUpFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_sign_up">
 
@@ -30,16 +30,21 @@
             android:id="@+id/action_SignUpFragment_to_LogInFragment"
             app:destination="@id/LogInFragment" />
         <action
-            android:id="@+id/action_SignUpFragment_to_testFragment"
-            app:destination="@id/testFragment" />
+            android:id="@+id/action_SignUpFragment_to_addLoverFragment"
+            app:destination="@id/addLoverFragment"
+            app:popUpTo="@id/addLoverFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
-        android:id="@+id/testFragment"
-        android:name="com.example.loveapp.ui.account.TestFragment"
+        android:id="@+id/addLoverFragment"
+        android:name="com.example.loveapp.ui.account.AddLoverFragment"
         android:label="fragment_test"
-        tools:layout="@layout/fragment_test" >
+        tools:layout="@layout/fragment_add_lover" >
         <action
-            android:id="@+id/action_testFragment_to_LogInFragment"
-            app:destination="@id/LogInFragment" />
+            android:id="@+id/action_addLoverFragment_to_LogInFragment"
+            app:destination="@id/LogInFragment"
+            app:popUpTo="@id/LogInFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
 </navigation>
