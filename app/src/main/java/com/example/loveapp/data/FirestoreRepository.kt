@@ -13,10 +13,12 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 const val USERS = "users"
+const val COUPLES = "couples"
 const val REQUESTS = "requests"
 const val NO_LOGIN_ERROR = "No current user logged in."
 const val NAME = 1
 const val MAIL = 2
+const val ID = 3
 
 class FirestoreRepository private constructor(){
 
@@ -46,6 +48,7 @@ class FirestoreRepository private constructor(){
         when (choice) {
             NAME -> return getCurrentUser()?.displayName ?: throw Exception(NO_LOGIN_ERROR)
             MAIL -> return getCurrentUser()?.email ?: throw Exception(NO_LOGIN_ERROR)
+            ID -> return getCurrentUser()?.uid ?: throw Exception(NO_LOGIN_ERROR)
         }
         return ""
     }
@@ -58,7 +61,7 @@ class FirestoreRepository private constructor(){
         val username = getMailOrName(NAME)
         val email = getMailOrName(MAIL)
         withContext(Dispatchers.IO) {
-            val user = User(email, username, false, 0)
+            val user = User(email, username, false, "null")
             val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
             db.collection(USERS).document(encodedMail).set(user).await()
         }
@@ -118,6 +121,25 @@ class FirestoreRepository private constructor(){
             .snapshots().map { snapshot ->
                 snapshot.toObjects(Request::class.java)
             }
+    }
+
+    suspend fun getCoupleData(): Couple? {
+        val email = getMailOrName(MAIL)
+        val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
+        var data: Couple? = null
+        withContext(Dispatchers.IO) {
+            val user = db.collection(USERS).document(encodedMail).get().await()
+            val coupleId = user.get("coupleId") as String
+            if (coupleId != "null") {
+                val coupleData = db.collection(COUPLES).document(coupleId).get().await()
+                data = Couple(
+                    coupleData.get("firstPerson") as String,
+                    coupleData.get("secondPerson") as String,
+                    coupleData.get("date") as List<Int>
+                )
+            }
+        }
+        return data
     }
 
 

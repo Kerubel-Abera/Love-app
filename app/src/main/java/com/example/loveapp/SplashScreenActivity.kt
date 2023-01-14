@@ -3,6 +3,7 @@ package com.example.loveapp
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
@@ -13,14 +14,16 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreenViewModel = ViewModelProvider(this)[SplashScreenViewModel::class.java]
-        splashScreenViewModel.isTaken.observe(this) {
-            if (it) {
+        Log.i("test", "splashscreenactivity called")
+        splashScreenViewModel.isTaken.observe(this) { isTaken ->
+            if (isTaken == true) {
                 startActivity(Intent(this, MainActivity::class.java))
-            } else if (!it) {
+            } else if (isTaken == false) {
                 startActivity(Intent(this, LoginActivity::class.java))
             }
             finish()
         }
+
 
     }
 }

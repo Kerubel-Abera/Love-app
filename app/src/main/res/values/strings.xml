@@ -38,5 +38,7 @@
     <string name="add_lover">Please add your lover by his or her e-mail.</string>
     <string name="add_lover_button">Add lover</string>
     <string name="empty_string">button</string>
+    <string name="date">%d/%d/%d</string>
+    <string name="days">%d Days</string>
 
 </resources>

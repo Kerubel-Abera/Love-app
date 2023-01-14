@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.loveapp.R
 import com.example.loveapp.databinding.FragmentHomeBinding
@@ -26,16 +24,31 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        homeViewModel.coupleData.observe(viewLifecycleOwner){ couple ->
+            if(couple != null) {
+                binding.textviewFirstPersonName.text = couple.firstPerson
+                binding.textviewSecondPersonName.text = couple.secondPerson
+                binding.textviewDate.text = resources.getString( R.string.date,
+                    couple.date?.get(0) ?: 0,
+                    couple.date?.get(1) ?: 0,
+                    couple.date?.get(2) ?: 0
+                )
+                couple.date?.let { homeViewModel.getAmountOfDays(it) }
+            }
+        }
+
+        homeViewModel.passedDays.observe(viewLifecycleOwner){ days ->
+            if(days != null) {
+                binding.textviewDays.text = resources.getString( R.string.days,
+                    days)
+            }
+        }
+
+        return binding.root
     }
 
     override fun onDestroyView() {
