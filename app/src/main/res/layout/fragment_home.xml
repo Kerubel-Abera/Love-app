@@ -13,9 +13,9 @@
         android:layout_height="100dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
+        android:src="@drawable/ic_add_photo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageview_first_person"
@@ -23,9 +23,9 @@
         android:layout_height="100dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
+        android:src="@drawable/ic_add_photo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageview_heart"
@@ -86,7 +86,7 @@
         style="@style/smallText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Boris"
+        android:text="TextView"
         app:layout_constraintEnd_toEndOf="@+id/imageview_first_person"
         app:layout_constraintStart_toStartOf="@+id/imageview_first_person"
         app:layout_constraintTop_toBottomOf="@+id/imageview_first_person" />
@@ -96,8 +96,44 @@
         style="@style/smallText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Jane"
+        android:text="TextView"
         app:layout_constraintEnd_toEndOf="@+id/imageview_second_person"
         app:layout_constraintStart_toStartOf="@+id/imageview_second_person"
         app:layout_constraintTop_toBottomOf="@+id/imageview_second_person" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/bg_recyclerview_home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_days">
+
+        <TextView
+            android:id="@+id/textView3"
+            style="@style/titleBoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Milestones"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMilestones"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:clipToPadding="true"
+            android:layout_marginBottom="?attr/actionBarSize"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            app:layout_constraintVertical_bias="1.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

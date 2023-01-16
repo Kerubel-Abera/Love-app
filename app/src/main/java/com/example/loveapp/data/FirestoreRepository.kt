@@ -1,11 +1,13 @@
 package com.example.loveapp.data
 
+import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -24,6 +26,7 @@ class FirestoreRepository private constructor(){
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val storage = FirebaseStorage.getInstance()
 
     companion object {
         private var instance: FirestoreRepository? = null
@@ -42,6 +45,71 @@ class FirestoreRepository private constructor(){
     /** Simple function that logs the firebase user out. **/
     fun logout() {
         auth.signOut()
+    }
+
+    suspend fun getUserIcons(): List<Uri?> {
+
+        var coupleId = ""
+        val email = getMailOrName(MAIL)
+        val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
+
+        withContext(Dispatchers.IO) {
+            val user = db.collection(USERS).document(encodedMail).get().await()
+            coupleId = user.get("coupleId") as String
+        }
+
+        val links = listOf(
+            "couples/$coupleId/firstPersonIcon.jpg",
+            "couples/$coupleId/secondPersonIcon.jpg"
+        )
+
+        val firstImageRef = storage.reference.child(links[0])
+        val secondImageRef = storage.reference.child(links[1])
+
+        val images: MutableList<Uri?> = mutableListOf()
+
+        withContext(Dispatchers.IO) {
+            firstImageRef.downloadUrl.addOnSuccessListener {
+                images.add(it)
+            }.addOnFailureListener {
+                images.add(null)
+                Log.i("HomeviewModel", "error: ${it.printStackTrace()}")
+            }.await()
+            secondImageRef.downloadUrl.addOnSuccessListener {
+                images.add(it)
+            }.addOnFailureListener {
+                images.add(null)
+            }.await()
+        }
+
+
+        Log.i("images", "images: $images")
+        return images
+    }
+
+    suspend fun postUserIcon(user: Int, uri: Uri) {
+        var path = ""
+        var coupleId = ""
+
+        val email = getMailOrName(MAIL)
+        val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
+
+        withContext(Dispatchers.IO){
+            val userData = db.collection(USERS).document(encodedMail).get().await()
+            coupleId = userData.get("coupleId") as String
+        }
+
+        when(user){
+            1 -> path = "couples/$coupleId/firstPersonIcon.jpg"
+            2 -> path = "couples/$coupleId/secondPersonIcon.jpg"
+        }
+
+        Log.i("FirestoreRepository", "path: $path")
+
+        val imageRef = storage.reference.child(path)
+        val uploadTask = imageRef.putFile(uri)
+
+        Log.i("FirestoreRepository", "uploaded file, task: $uploadTask")
     }
 
     private fun getMailOrName(choice: Int): String {
