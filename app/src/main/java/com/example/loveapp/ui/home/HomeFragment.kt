@@ -51,6 +51,13 @@ class HomeFragment : Fragment() {
         milestonesList.adapter = HomeMilestonesAdapter(emptyList())
         milestonesList.layoutManager = LinearLayoutManager(context)
 
+
+        homeViewModel.milestones.observe(viewLifecycleOwner){ milestones ->
+            milestones?.let { milestones ->
+                (milestonesList.adapter as HomeMilestonesAdapter).submitList(milestones)
+            }
+        }
+
         homeViewModel.firstUserIcon.observe(viewLifecycleOwner){ uri ->
             val imageView = binding.imageviewFirstPerson
             Glide.with(this)
@@ -67,12 +74,6 @@ class HomeFragment : Fragment() {
                 .error(R.drawable.ic_add_photo)
                 .transform(CenterCrop(), RoundedCorners(11))
                 .into(imageView)
-        }
-
-        homeViewModel.milestones.observe(viewLifecycleOwner){ milestones ->
-            milestones?.let { milestones ->
-                (milestonesList.adapter as HomeMilestonesAdapter).submitList(milestones)
-            }
         }
 
         homeViewModel.coupleData.observe(viewLifecycleOwner){ couple ->

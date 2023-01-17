@@ -9,9 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.loveapp.data.Couple
 import com.example.loveapp.data.FirestoreRepository
 import com.example.loveapp.data.Milestone
-import com.example.loveapp.data.Request
 import kotlinx.coroutines.launch
-import java.lang.Math.round
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -33,14 +31,15 @@ class HomeViewModel : ViewModel() {
     private val _milestones = MutableLiveData<List<Milestone>?>()
     val milestones: LiveData<List<Milestone>?> = _milestones
 
+
     private val repository = FirestoreRepository.getInstance()
 
-    init{
+    init {
         getCoupleData()
         updateUserIcons()
     }
 
-    fun getMilestones() {
+    fun getMilestones(): List<Milestone>? {
         val date = _coupleData.value?.date
         if(date != null){
             val milestones = mutableListOf<Milestone>()
@@ -49,9 +48,15 @@ class HomeViewModel : ViewModel() {
             var anniversaryDate = Calendar.getInstance()
             anniversaryDate.set(date[2], date[1]-1, date[0])
             anniversaryDate.add(Calendar.MONTH, 1)
+            var monthsFinished = false
 
             while (anniversaryDate <= currentDate) {
-                anniversaryCounter++
+                if(monthsFinished) {
+                    anniversaryCounter += 12
+                } else {
+                    anniversaryCounter++
+                }
+
                 val anniversaryUnits = if (anniversaryCounter % 12 == 0) "year" else "month"
                 val anniversaryPeriod = if (anniversaryCounter % 12 == 0) anniversaryCounter / 12 else anniversaryCounter
                 if(anniversaryDate.get(Calendar.MONTH) == currentDate.get(Calendar.MONTH) &&
@@ -60,13 +65,14 @@ class HomeViewModel : ViewModel() {
                         "$anniversaryPeriod $anniversaryUnits anniversary is today!",
                         "Today!"
                     ))
-                } else if(anniversaryCounter == 12) {
-                    anniversaryDate.add(Calendar.MONTH, 1)
+                } else if(anniversaryCounter > 11) {
+                    monthsFinished = true
                     milestones.add(Milestone(
                         "$anniversaryPeriod $anniversaryUnits anniversary",
                         "${anniversaryDate.get(Calendar.DATE)} / ${anniversaryDate.get(Calendar.MONTH)+1} / ${anniversaryDate.get(Calendar.YEAR)}"
                     ))
-                }else {
+                    anniversaryDate.add(Calendar.MONTH, 12)
+                } else {
                     milestones.add(Milestone(
                         "$anniversaryPeriod $anniversaryUnits anniversary",
                         "${anniversaryDate.get(Calendar.DATE)} / ${anniversaryDate.get(Calendar.MONTH)+1} / ${anniversaryDate.get(Calendar.YEAR)}"
@@ -76,7 +82,7 @@ class HomeViewModel : ViewModel() {
             }
             val nextAnniversary = Calendar.getInstance()
             nextAnniversary.set(date[2], date[1]-1, date[0])
-            nextAnniversary.add(Calendar.MONTH, anniversaryCounter+1)
+            nextAnniversary.add(Calendar.MONTH, anniversaryCounter + 12)
             val nextAnniversaryUnits = if (anniversaryCounter % 12 == 0) "year" else "month"
             val nextAnniversaryPeriod = if (anniversaryCounter % 12 == 0) anniversaryCounter / 12 + 1 else anniversaryCounter + 1
             val diff = nextAnniversary.timeInMillis - currentDate.timeInMillis
@@ -86,17 +92,22 @@ class HomeViewModel : ViewModel() {
                 "$days days"
             ))
             _milestones.value = milestones.reversed()
+            Log.i("milestones", milestones.toString())
+            return milestones.reversed()
         }
+        return null
     }
 
-private fun getCoupleData() {
+
+
+    private fun getCoupleData() {
         viewModelScope.launch {
             _coupleData.value = repository.getCoupleData()
         }
     }
 
     fun updateUserIcons() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             val icons = repository.getUserIcons()
             Log.i("HomeviewModel", "updateUserIcons called")
             Log.i("HomeviewModel", "firstUserIcon before: ${_firstUserIcon.value}")
@@ -116,7 +127,7 @@ private fun getCoupleData() {
     fun getAmountOfDays(date: List<Int>) {
         val currentDate = Calendar.getInstance()
         val savedDate = Calendar.getInstance()
-        savedDate.set(date[2], date[1]-1, date[0])
+        savedDate.set(date[2], date[1] - 1, date[0])
         val diff = currentDate.timeInMillis - savedDate.timeInMillis
         val diffDays = (diff / (24 * 60 * 60 * 1000)).toDouble().roundToInt()
         _passedDays.value = diffDays

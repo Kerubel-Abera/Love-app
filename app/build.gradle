@@ -52,6 +52,8 @@ dependencies {
 
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 
+    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
+
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.core:core-splashscreen:1.0.0")

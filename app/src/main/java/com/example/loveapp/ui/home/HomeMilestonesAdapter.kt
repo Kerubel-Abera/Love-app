@@ -2,6 +2,7 @@ package com.example.loveapp.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loveapp.data.Milestone
 import com.example.loveapp.databinding.HomeMilestonesItemBinding
@@ -26,6 +27,7 @@ class HomeMilestonesAdapter(private var milestones: List<Milestone>) :
         val milestone = milestones[position]
         holder.binding.textviewMilestoneTitle.text = milestone.status
         holder.binding.textviewMilestoneDate.text = milestone.date
+
     }
 
     override fun getItemCount(): Int {

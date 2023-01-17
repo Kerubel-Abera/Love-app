@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,7 +23,7 @@ const val NAME = 1
 const val MAIL = 2
 const val ID = 3
 
-class FirestoreRepository private constructor(){
+class FirestoreRepository private constructor() {
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -30,13 +31,14 @@ class FirestoreRepository private constructor(){
 
     companion object {
         private var instance: FirestoreRepository? = null
-        fun getInstance() : FirestoreRepository {
+        fun getInstance(): FirestoreRepository {
             if (instance == null) {
                 instance = FirestoreRepository()
             }
             return instance!!
         }
     }
+
     /** Simple function that returns the firebase user. **/
     fun getCurrentUser(): FirebaseUser? {
         return auth.currentUser
@@ -68,18 +70,24 @@ class FirestoreRepository private constructor(){
 
         val images: MutableList<Uri?> = mutableListOf()
 
+
         withContext(Dispatchers.IO) {
-            firstImageRef.downloadUrl.addOnSuccessListener {
-                images.add(it)
-            }.addOnFailureListener {
+            try {
+                firstImageRef.downloadUrl.addOnSuccessListener {
+                    images.add(it)
+                }.await()
+            } catch (e: StorageException) {
                 images.add(null)
-                Log.i("HomeviewModel", "error: ${it.printStackTrace()}")
-            }.await()
-            secondImageRef.downloadUrl.addOnSuccessListener {
-                images.add(it)
-            }.addOnFailureListener {
+            }
+
+            try {
+                secondImageRef.downloadUrl.addOnSuccessListener {
+                    images.add(it)
+                }.await()
+            } catch (e: StorageException) {
                 images.add(null)
-            }.await()
+            }
+
         }
 
 
@@ -94,12 +102,12 @@ class FirestoreRepository private constructor(){
         val email = getMailOrName(MAIL)
         val encodedMail = Base64.encodeToString(email.toByteArray(), Base64.DEFAULT)
 
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             val userData = db.collection(USERS).document(encodedMail).get().await()
             coupleId = userData.get("coupleId") as String
         }
 
-        when(user){
+        when (user) {
             1 -> path = "couples/$coupleId/firstPersonIcon.jpg"
             2 -> path = "couples/$coupleId/secondPersonIcon.jpg"
         }
